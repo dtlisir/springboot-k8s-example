@@ -5,7 +5,7 @@ def projectProperties = [
         parameters([
             string(name: 'DOCKER_USER', defaultValue: 'lisir', description: 'docker用户名'),
             string(name: 'DOCKER_PASSWORD', defaultValue: 'Ly800213', description: 'docker用户密码'),
-            string(name: 'REGISTRY_URL', defaultValue: 'harbor.dtlisir.cn', description: 'docker仓库地址')
+            string(name: 'REGISTRY_URL', defaultValue: 'harbor.dtlisir.cn', description: 'docker仓库地址'),
         ])
 ]
 
@@ -83,6 +83,7 @@ podTemplate(label: label, cloud: 'kubernetes', inheritFrom: 'default', container
         container('kubectl') {
             stage('k8s deploy') {
                 sh "sed -i \"s/lusyoe\\/k8s-example/${params.REGISTRY_URL}\\/springboot-k8s-example\\/k8s-example:${shortGitCommit}/g\" k8s-example.yaml"
+                sh "sed -i \"s/127.0.0.1/172.16.18.5/\" /root/.kube/config"
                 sh "kubectl --kubeconfig=/root/.kube/config apply -f k8s-example.yaml"
             }
         }
